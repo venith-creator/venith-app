@@ -1,0 +1,107 @@
+/* front.css – Styling for the Front (Home) Page */
+
+.front-page {
+  max-width: 850px;
+  margin: 2rem auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fafafa;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  text-align: center;
+  font-size: 2rem;
+  color: #4b0082;
+}
+
+.intro {
+  text-align: center;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.form-section {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 2rem;
+}
+
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.user-form input {
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.user-form button {
+  padding: 0.6rem 1.2rem;
+  background-color: #4b0082;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #ccc;
+  color: #333;
+}
+
+.user-list-section h2 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.user-list {
+  list-style: none;
+  padding: 0;
+}
+
+.user-card {
+  background-color: #fff;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-actions button {
+  margin-left: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.user-actions button:hover {
+  opacity: 0.85;
+}
+
+.user-actions .delete-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.user-actions button:not(.delete-btn) {
+  background-color: #4b0082;
+  color: white;
+}

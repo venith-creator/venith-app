@@ -1,0 +1,35 @@
+.admin-box {
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.admin-box p {
+  margin: 6px 0;
+}
+
+.admin-box textarea {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.admin-box button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #0066cc;
+  color: white;
+  cursor: pointer;
+}
+
+.admin-box button:hover {
+  background-color: #004d99;
+}
