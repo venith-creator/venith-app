@@ -276,6 +276,23 @@ app.get('/check-build', (req, res) => {
   }
 });
 
+app.get('/debug-paths', (req, res) => {
+  res.json({
+    paths: {
+      clientBuildPath: {
+        exists: fs.existsSync(clientBuildPath),
+        files: fs.existsSync(clientBuildPath) ? 
+               fs.readdirSync(clientBuildPath) : []
+      },
+      railwayBuildPath: {
+        exists: fs.existsSync(railwayBuildPath),
+        files: fs.existsSync(railwayBuildPath) ? 
+               fs.readdirSync(railwayBuildPath) : []
+      }
+    }
+  });
+});
+
 /*const clientBuildPath = path.join(__dirname, '../client/build');
 
 if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
