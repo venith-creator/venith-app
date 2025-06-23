@@ -267,22 +267,39 @@ app.get('/api/validate-token', authenticateToken, (req, res) => {
     });
 });
 
-const clientBuildPath = path.join(__dirname, '../client/build');
+app.get('/check-build', (req, res) => {
+  try {
+    const files = fs.readdirSync(path.join(__dirname, '../client/build'));
+    res.json({ status: 'Build exists', files });
+  } catch (err) {
+    res.json({ status: 'Build MISSING', error: err.message });
+  }
+});
 
-if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
+//const clientBuildPath = path.join(__dirname, '../client/build');
+
+//if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
   /*app.use('/app', express.static(clientBuildPath));*/
-  app.use(express.static(clientBuildPath));
+ /* app.use(express.static(clientBuildPath));
   
-  app.get('*', (req, res) => {
+  app.get('*', (req, res) => {*/
   /*app.get('/app/', (req, res) => {*/
-    res.sendFile(path.join(clientBuildPath, 'index.html'));
+   /* res.sendFile(path.join(clientBuildPath, 'index.html'));
   });
 } else {
   console.warn('⚠️ React build folder not found. Skipping static file serving.');
-}
+}*/
 
-app.get('/', (req, res) => {
+/*app.get('/', (req, res) => {
   res.redirect('/app');
+});*/
+
+const clientBuildPath = path.join(__dirname, '../client/build');
+
+app.use(express.static(clientBuildPath));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(clientBuildPath, 'index.html'));
 });
 
 app.listen(PORT, () => {
