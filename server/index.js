@@ -328,7 +328,7 @@ if (staticPath) {
   });
   
   // Handle nested routes
-  app.get('/app/', (req, res) => {
+ /* app.get('/app/', (req, res) => {
     const requestedPath = req.params[0];
     const fullPath = path.join(staticPath, requestedPath);
     
@@ -337,7 +337,17 @@ if (staticPath) {
     } else {
       res.sendFile(path.join(staticPath, 'index.html'));
     }
-  });
+  });*/
+  app.get('/app/', (req, res) => {
+    const requestedPath = req.params[0];
+    const fullPath = path.join(staticPath, requestedPath);
+    
+    if (fs.existsSync(fullPath)) {
+        res.sendFile(fullPath);
+    } else {
+        res.sendFile(path.join(staticPath, 'index.html'));
+    }
+   });
   
 } else {
   console.error('❌ Build folder not found in:', [clientBuildPath, railwayBuildPath]);
@@ -345,6 +355,24 @@ if (staticPath) {
 
 // Redirect root to /app
 app.get('/', (req, res) => res.redirect('/app'));
+
+const { execSync } = require('child_process');
+
+// Nuclear debug route - keep this until deployment works
+app.get('/nuke', (req, res) => {
+  try {
+    const files = execSync('find /app').toString();
+    const distContents = execSync('ls -la /app/dist').toString();
+    res.send(`
+      <h1>Full /app structure:</h1>
+      <pre>${files}</pre>
+      <h1>/app/dist contents:</h1>
+      <pre>${distContents}</pre>
+    `);
+  } catch (e) {
+    res.send(`Error: ${e.message}`);
+  }
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)
