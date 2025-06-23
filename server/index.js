@@ -267,7 +267,7 @@ app.get('/api/validate-token', authenticateToken, (req, res) => {
     });
 });
 
-/*const clientBuildPath = path.join(__dirname, '../client/build');
+const clientBuildPath = path.join(__dirname, '../client/build');
 
 if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
   app.use('/app', express.static(clientBuildPath));
@@ -281,21 +281,7 @@ if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
 
 app.get('/', (req, res) => {
   res.redirect('/app');
-});*/
-
-const clientBuildPath = path.join(__dirname, '../client/build');
-
-if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
-  app.use(express.static(clientBuildPath));
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(clientBuildPath, 'index.html'));
-  });
-} else {
-  console.warn('⚠️ React build folder not found. Skipping static file serving.');
-}
-
-
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)
