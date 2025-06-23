@@ -1,3 +1,3 @@
 module.exports = {
-  SECRET_KEY: 'your_jwt_secret_key'
+  SECRET_KEY: process.env.SECRET_KEY || 'default_dev_secret'
 };

@@ -14,6 +14,7 @@ const { authenticateToken, verifyOwnerOrAdmin } = require('./middleware/auth');
 const chatRoutes = require('./chat');
 const path = require('path');
 const fs = require('fs');
+require('dotenv').config();
 
 console.log('POOL:', pool);
 
@@ -266,7 +267,25 @@ app.get('/api/validate-token', authenticateToken, (req, res) => {
     });
 });
 
-const buildPath = path.join(__dirname, '../client/build/index.html');
+const clientBuildPath = path.join(__dirname, '../client/build');
+
+if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
+  app.use('/app', express.static(clientBuildPath));
+
+  app.get('/app/', (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+} else {
+  console.warn('⚠️ React build folder not found. Skipping static file serving.');
+}
+
+app.get('/', (req, res) => {
+  res.redirect('/app');
+});
+
+
+
+/*const buildPath = path.join(__dirname, '../client/build/index.html');
 if (fs.existsSync(buildPath)) {
     app.use(express.static(path.join(__dirname, '../client/build')));
 
@@ -275,7 +294,7 @@ if (fs.existsSync(buildPath)) {
     });
 } else {
   console.warn('⚠️ React build folder not found. Skipping static file serving.');
-}
+}*/
 
 /*const clientBuildPath = path.join(__dirname, '../client/build');
 const indexHtmlPath = path.join(clientBuildPath, 'index.html');

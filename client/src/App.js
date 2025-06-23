@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Front from './Front';
 import About from './About';
 import Projects from './Projects';
@@ -59,7 +59,7 @@ function App() {
     console.log('Logged out')
   }
   return (
-      <Router>
+      <BrowserRouter basename="/app">
       <div className="App">
         <Navbar user={loggedInUser}  onLogout={handleLogout}/>
         <Routes>
@@ -76,7 +76,7 @@ function App() {
         </Routes>
         <ToastContainer />
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
 

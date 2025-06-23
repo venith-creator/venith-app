@@ -13,3 +13,4 @@ build/
 # Mac system file
 .DS_Store
 
+.env
