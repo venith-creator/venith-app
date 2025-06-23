@@ -285,11 +285,10 @@ app.get('/', (req, res) => {
 
 const clientBuildPath = path.join(__dirname, 'client/build');
 
-if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
+ if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
   app.use(express.static(clientBuildPath));
 
-  // Serve React frontend for all non-API routes
-  app.get(/^\/(?!api).*/, (req, res) => {
+  app.get('*', (req, res) => {
     res.sendFile(path.join(clientBuildPath, 'index.html'));
   });
 } else {
