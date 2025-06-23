@@ -276,7 +276,7 @@ app.get('/check-build', (req, res) => {
   }
 });
 
-const clientBuildPath = path.join(__dirname, '../client/build');
+/*const clientBuildPath = path.join(__dirname, '../client/build');
 
 if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
   app.use('/app', express.static(clientBuildPath));
@@ -290,7 +290,26 @@ if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
 
 app.get('/', (req, res) => {
   res.redirect('/app');
-});
+});*/
+
+const clientBuildPath = path.join(__dirname, '../client/build');
+const railwayBuildPath = path.join(__dirname, '/app/client-build');
+
+// Try both possible build locations
+const staticPath = fs.existsSync(railwayBuildPath) ? railwayBuildPath : 
+                  fs.existsSync(clientBuildPath) ? clientBuildPath : null;
+
+if (staticPath) {
+  app.use('/app', express.static(staticPath));
+  app.get('/app/', (req, res) => {
+    res.sendFile(path.join(staticPath, 'index.html'));
+  });
+  console.log(`✅ Serving static files from: ${staticPath}`);
+} else {
+  console.error('❌ Build folder not found in either location');
+}
+
+app.get('/', (req, res) => res.redirect('/app'));
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)

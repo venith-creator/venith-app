@@ -1,8 +1,8 @@
 {
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "cd client && npm install && npm run build",
+    "buildCommand": "cd client && npm install && (if [ \"$RAILWAY_ENVIRONMENT\" = \"production\" ]; then export GENERATE_SOURCEMAP=false; fi) && npm run build && cd .. && mv client/build /app/client-build",
     "startCommand": "node server/index.js",
-    "outputDirectory": "client/build"
+    "outputDirectory": "/app/client-build"
   }
 }
