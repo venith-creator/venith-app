@@ -12,6 +12,8 @@ const productsRoute = require('./products');
 const adminRoutes = require('./admin');
 const { authenticateToken, verifyOwnerOrAdmin } = require('./middleware/auth');
 const chatRoutes = require('./chat');
+const path = require('path');
+const fs = require('fs');
 
 console.log('POOL:', pool);
 
@@ -33,6 +35,12 @@ app.use('/api/reviews', reviewsRoute);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/products', productsRoute);
 app.use('/api/chat', chatRoutes);
+
+const originalGet = app.get;
+app.get = function(path, ...handlers) {
+  console.log(`Registering GET route: ${path}`); // Log all GET routes
+  return originalGet.call(this, path, ...handlers);
+};
 
 app.post('/api/signup', async (req, res) => {
     const { name, email, password } = req.body;
@@ -257,6 +265,33 @@ app.get('/api/validate-token', authenticateToken, (req, res) => {
         isAdmin: req.user.role === 'admin'
     });
 });
+
+const buildPath = path.join(__dirname, '../client/build/index.html');
+if (fs.existsSync(buildPath)) {
+    app.use(express.static(path.join(__dirname, '../client/build')));
+
+    app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+    });
+} else {
+  console.warn('⚠️ React build folder not found. Skipping static file serving.');
+}
+
+/*const clientBuildPath = path.join(__dirname, '../client/build');
+const indexHtmlPath = path.join(clientBuildPath, 'index.html');
+
+// Only serve React static files if the build exists
+if (fs.existsSync(indexHtmlPath)) {
+  app.use(express.static(clientBuildPath));
+
+  // Catch-all to handle client-side routing in React
+  app.get('*', (req, res) => {
+    res.sendFile(indexHtmlPath);
+  });
+} else {
+  console.warn('⚠️ React build folder not found. Skipping static file serving.');
+}*/
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)

@@ -146,58 +146,6 @@ router.get('/all-users', authenticateToken, async (req, res) => {
 });
 
 
-// Get conversation between two users 
-router.get('/:otherUserId', 
-  authenticateToken,
-  (req, res, next) => {
-    console.log('Starting message fetch for user:', req.user.id);
-    next();
-  },
-  async (req, res) => {
-    try {
-      // Input validation 
-      const otherUserId = parseInt(req.params.otherUserId);
-      if (isNaN(otherUserId)) {
-        console.warn('Invalid user ID received:', req.params.otherUserId);
-        return res.status(400).json({ error: 'Invalid user ID' });
-      }
-
-      // Database query - maintains your style but improves message retrieval
-      const result = await pool.query(
-        `SELECT 
-          m.*, 
-          u.name as sender_name,
-          CASE WHEN m.sender_id = $1 THEN 'outgoing' ELSE 'incoming' END as direction
-         FROM messages m
-         JOIN users u ON m.sender_id = u.id
-         WHERE (m.sender_id = $1 AND m.receiver_id = $2)
-         OR (m.sender_id = $2 AND m.receiver_id = $1)
-         ORDER BY m.created_at ASC`, 
-        [req.user.id, otherUserId]
-      );
-
-      // Response formatting 
-      console.log(`Fetched ${result.rows.length} messages between ${req.user.id} and ${otherUserId}`);
-      res.json({
-        success: true,
-        messages: result.rows,
-        meta: {
-          current_user_id: req.user.id,
-          other_user_id: otherUserId
-        }
-      });
-    } catch (err) {
-      // Error handling - matches your existing pattern
-      console.error('Message fetch error:', err);
-      res.status(500).json({ 
-        error: 'Failed to get messages',
-        details: err.message,
-        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
-      });
-    }
-  }
-);
-
 router.get('/user/:userId', authenticateToken, async (req, res) => {
     try {
         const userId = parseInt(req.params.userId);
@@ -311,4 +259,55 @@ router.get('/super-simple', (req, res) => {
 router.get('/super-simple-authed', authenticateToken, (req, res) => {
     res.json({ user: req.user });
 });
+
+router.get('/:otherUserId', 
+  authenticateToken,
+  (req, res, next) => {
+    console.log('Starting message fetch for user:', req.user.id);
+    next();
+  },
+  async (req, res) => {
+    try {
+      // Input validation 
+      const otherUserId = parseInt(req.params.otherUserId);
+      if (isNaN(otherUserId)) {
+        console.warn('Invalid user ID received:', req.params.otherUserId);
+        return res.status(400).json({ error: 'Invalid user ID' });
+      }
+
+      // Database query - maintains your style but improves message retrieval
+      const result = await pool.query(
+        `SELECT 
+          m.*, 
+          u.name as sender_name,
+          CASE WHEN m.sender_id = $1 THEN 'outgoing' ELSE 'incoming' END as direction
+         FROM messages m
+         JOIN users u ON m.sender_id = u.id
+         WHERE (m.sender_id = $1 AND m.receiver_id = $2)
+         OR (m.sender_id = $2 AND m.receiver_id = $1)
+         ORDER BY m.created_at ASC`, 
+        [req.user.id, otherUserId]
+      );
+
+      // Response formatting 
+      console.log(`Fetched ${result.rows.length} messages between ${req.user.id} and ${otherUserId}`);
+      res.json({
+        success: true,
+        messages: result.rows,
+        meta: {
+          current_user_id: req.user.id,
+          other_user_id: otherUserId
+        }
+      });
+    } catch (err) {
+      // Error handling - matches your existing pattern
+      console.error('Message fetch error:', err);
+      res.status(500).json({ 
+        error: 'Failed to get messages',
+        details: err.message,
+        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+      });
+    }
+  }
+);
 module.exports = router;
