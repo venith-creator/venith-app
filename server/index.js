@@ -283,9 +283,9 @@ app.get('/', (req, res) => {
   res.redirect('/app');
 });*/
 
-const clientBuildPath = path.join(__dirname, 'client/build');
+const clientBuildPath = path.join(__dirname, '../client/build');
 
- if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
+if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
   app.use(express.static(clientBuildPath));
 
   app.get('*', (req, res) => {
@@ -294,6 +294,7 @@ const clientBuildPath = path.join(__dirname, 'client/build');
 } else {
   console.warn('⚠️ React build folder not found. Skipping static file serving.');
 }
+
 
 
 app.listen(PORT, () => {
