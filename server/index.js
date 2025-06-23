@@ -267,7 +267,7 @@ app.get('/api/validate-token', authenticateToken, (req, res) => {
     });
 });
 
-const clientBuildPath = path.join(__dirname, '../client/build');
+/*const clientBuildPath = path.join(__dirname, '../client/build');
 
 if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
   app.use('/app', express.static(clientBuildPath));
@@ -281,35 +281,20 @@ if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
 
 app.get('/', (req, res) => {
   res.redirect('/app');
-});
+});*/
 
+const clientBuildPath = path.join(__dirname, 'client/build');
 
-
-/*const buildPath = path.join(__dirname, '../client/build/index.html');
-if (fs.existsSync(buildPath)) {
-    app.use(express.static(path.join(__dirname, '../client/build')));
-
-    app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
-    });
-} else {
-  console.warn('⚠️ React build folder not found. Skipping static file serving.');
-}*/
-
-/*const clientBuildPath = path.join(__dirname, '../client/build');
-const indexHtmlPath = path.join(clientBuildPath, 'index.html');
-
-// Only serve React static files if the build exists
-if (fs.existsSync(indexHtmlPath)) {
+if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
   app.use(express.static(clientBuildPath));
 
-  // Catch-all to handle client-side routing in React
-  app.get('*', (req, res) => {
-    res.sendFile(indexHtmlPath);
+  // Serve React frontend for all non-API routes
+  app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
   });
 } else {
   console.warn('⚠️ React build folder not found. Skipping static file serving.');
-}*/
+}
 
 
 app.listen(PORT, () => {
