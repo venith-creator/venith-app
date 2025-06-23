@@ -1,7 +1,7 @@
 {
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "cd client && npm install && npm run build && mkdir -p /app/dist && cp -r build/ /app/dist/",
+    "buildCommand": "cd client && npm install && npm run build && mkdir -p /app/dist && cp -r build/* /app/dist/",
     "startCommand": "node server/index.js",
     "outputDirectory": "/app/dist"
   }
