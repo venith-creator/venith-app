@@ -270,9 +270,11 @@ app.get('/api/validate-token', authenticateToken, (req, res) => {
 const clientBuildPath = path.join(__dirname, '../client/build');
 
 if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
-  app.use('/app', express.static(clientBuildPath));
-
-  app.get('/app/', (req, res) => {
+  /*app.use('/app', express.static(clientBuildPath));*/
+  app.use(express.static(clientBuildPath));
+  
+  app.get('*', (req, res) => {
+  /*app.get('/app/', (req, res) => {*/
     res.sendFile(path.join(clientBuildPath, 'index.html'));
   });
 } else {
