@@ -310,22 +310,40 @@ app.get('/', (req, res) => {
 });*/
 
 const clientBuildPath = path.join(__dirname, '../client/build');
-const railwayBuildPath = path.join(__dirname, '/app/client-build');
+const railwayBuildPath = path.join(__dirname, '/app/dist');
 
-// Try both possible build locations
+// Find existing build location
 const staticPath = fs.existsSync(railwayBuildPath) ? railwayBuildPath : 
                   fs.existsSync(clientBuildPath) ? clientBuildPath : null;
 
 if (staticPath) {
+  console.log(`✅ Serving static files from: ${staticPath}`);
+  
+  // Serve static files under /app
   app.use('/app', express.static(staticPath));
-  app.get('/app/', (req, res) => {
+  
+  // Handle specific routes
+  app.get('/app', (req, res) => {
     res.sendFile(path.join(staticPath, 'index.html'));
   });
-  console.log(`✅ Serving static files from: ${staticPath}`);
+  
+  // Handle nested routes
+  app.get('/app/', (req, res) => {
+    const requestedPath = req.params[0];
+    const fullPath = path.join(staticPath, requestedPath);
+    
+    if (fs.existsSync(fullPath)) {
+      res.sendFile(fullPath);
+    } else {
+      res.sendFile(path.join(staticPath, 'index.html'));
+    }
+  });
+  
 } else {
-  console.error('❌ Build folder not found in either location');
+  console.error('❌ Build folder not found in:', [clientBuildPath, railwayBuildPath]);
 }
 
+// Redirect root to /app
 app.get('/', (req, res) => res.redirect('/app'));
 
 app.listen(PORT, () => {
