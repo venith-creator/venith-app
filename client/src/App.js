@@ -27,7 +27,7 @@ function App() {
     
     if (token && userData) {
       try {
-        const res = await fetch('http://localhost:4000/api/validate-token', {
+        const res = await fetch('/api/validate-token', {
           headers: { Authorization: `Bearer ${token}` }
         });
         

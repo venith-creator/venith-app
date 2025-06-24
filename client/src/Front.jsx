@@ -12,7 +12,7 @@ export default function Front() {
     const [editingId, setEditingId] = useState(null);
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_API_URL}/api/users`)
+        fetch('/api/users')
         .then((response) => response.json())
         .then((data) => {
             setUsers(data);
@@ -45,7 +45,7 @@ export default function Front() {
 
         if (editingId) {
             /*try {*/
-                const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users/${editingId}`, {
+                const res = await fetch('/api/users/${editingId}', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
@@ -64,7 +64,7 @@ export default function Front() {
             toast.success('User updated successfully!');
             
         } else {
-                const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users`, {
+                const res = await fetch('/api/users', {
                     method: 'POST',
                     headers: { 'Content-Type' : 'application/json',
                         'Authorization': `Bearer ${token}`
@@ -115,7 +115,7 @@ export default function Front() {
         const token = localStorage.getItem('token')
         if (!window.confirm('Are you sure you want to delete this user?')) return;
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users/${id}`, {
+            const res = await fetch('/api/users/${id}', {
                 method: 'DELETE',
                 headers: { 'Authorization' : `Bearer ${token}`}
             });
