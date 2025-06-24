@@ -2,6 +2,8 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "start": "node server/index.js"
+    "build": "cd client && npm install && npm run build",
+    "start": "node server/index.js",
+    "postinstall": "mkdir -p /app/dist && cp -r client/build/* /app/dist/"
   }
 }

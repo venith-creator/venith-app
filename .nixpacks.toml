@@ -1,9 +1,0 @@
-[phases.build]
-nixPkgs = ["nodejs"]
-commands = [
-  "cd client && npm install && npm run build",
-  "mkdir -p /app/dist && cp -r client/build/* /app/dist/"
-]
-
-[phases.start]
-command = "node server/index.js"

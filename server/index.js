@@ -14,6 +14,7 @@ const { authenticateToken, verifyOwnerOrAdmin } = require('./middleware/auth');
 const chatRoutes = require('./chat');
 const path = require('path');
 const fs = require('fs');
+const staticPath = '/app/dist';
 require('dotenv').config();
 
 console.log('POOL:', pool);
@@ -293,84 +294,64 @@ app.get('/debug-paths', (req, res) => {
   });
 });
 
-/*const clientBuildPath = path.join(__dirname, '../client/build');
+const localBuildPath = path.join(__dirname, '../client/build'); // For local dev
 
-if (fs.existsSync(path.join(clientBuildPath, 'index.html'))) {
-  app.use('/app', express.static(clientBuildPath));
- 
-  app.get('/app/', (req, res) => {
-    res.sendFile(path.join(clientBuildPath, 'index.html'));
-  });
-} else {
-  console.warn('⚠️ React build folder not found. Skipping static file serving.');
-}
+// Debug endpoint
+app.get('/nuke', (req, res) => {
+  try {
+    const result = {
+      railwayPath: {
+        path: staticPath,
+        exists: fs.existsSync(staticPath),
+        files: fs.existsSync(staticPath) ? fs.readdirSync(staticPath) : []
+      },
+      localPath: {
+        path: localBuildPath,
+        exists: fs.existsSync(localBuildPath),
+        files: fs.existsSync(localBuildPath) ? fs.readdirSync(localBuildPath) : []
+      },
+      __dirname,
+      processCwd: process.cwd()
+    };
+    res.json(result);
+  } catch (e) {
+    res.status(500).json({ error: e.toString() });
+  }
+});
 
-app.get('/', (req, res) => {
-  res.redirect('/app');
-});*/
-
-const clientBuildPath = path.join(__dirname, '../client/build');
-const railwayBuildPath = path.join(__dirname, '/app/dist');
-
-// Find existing build location
-const staticPath = fs.existsSync(railwayBuildPath) ? railwayBuildPath : 
-                  fs.existsSync(clientBuildPath) ? clientBuildPath : null;
-
-if (staticPath) {
-  console.log(`✅ Serving static files from: ${staticPath}`);
-  
-  // Serve static files under /app
+// Serve static files if they exist
+if (fs.existsSync(staticPath)) {
+  console.log('✅ Serving PRODUCTION build from:', staticPath);
   app.use('/app', express.static(staticPath));
-  
-  // Handle specific routes
-  app.get('/app', (req, res) => {
+  app.get('/app/', (req, res) => {
     res.sendFile(path.join(staticPath, 'index.html'));
   });
-  
-  // Handle nested routes
- /* app.get('/app/', (req, res) => {
-    const requestedPath = req.params[0];
-    const fullPath = path.join(staticPath, requestedPath);
-    
-    if (fs.existsSync(fullPath)) {
-      res.sendFile(fullPath);
-    } else {
-      res.sendFile(path.join(staticPath, 'index.html'));
-    }
-  });*/
+} 
+else if (fs.existsSync(localBuildPath)) {
+  console.log('⚠️ Serving LOCAL build from:', localBuildPath);
+  app.use('/app', express.static(localBuildPath));
   app.get('/app/', (req, res) => {
-    const requestedPath = req.params[0];
-    const fullPath = path.join(staticPath, requestedPath);
-    
-    if (fs.existsSync(fullPath)) {
-        res.sendFile(fullPath);
-    } else {
-        res.sendFile(path.join(staticPath, 'index.html'));
-    }
-   });
-  
-} else {
-  console.error('❌ Build folder not found in:', [clientBuildPath, railwayBuildPath]);
+    res.sendFile(path.join(localBuildPath, 'index.html'));
+  });
+} 
+else {
+  console.error('❌ No build folder found at:', { staticPath, localBuildPath });
 }
 
-// Redirect root to /app
+// Root redirect
 app.get('/', (req, res) => res.redirect('/app'));
 
 const { execSync } = require('child_process');
 
-// Nuclear debug route - keep this until deployment works
 app.get('/nuke', (req, res) => {
   try {
-    const files = execSync('find /app').toString();
-    const distContents = execSync('ls -la /app/dist').toString();
-    res.send(`
-      <h1>Full /app structure:</h1>
-      <pre>${files}</pre>
-      <h1>/app/dist contents:</h1>
-      <pre>${distContents}</pre>
-    `);
+    res.json({
+      distExists: fs.existsSync(staticPath),
+      files: fs.existsSync(staticPath) ? fs.readdirSync(staticPath) : [],
+      fullPath: path.resolve(staticPath)
+    });
   } catch (e) {
-    res.send(`Error: ${e.message}`);
+    res.status(500).send(e.toString());
   }
 });
 
