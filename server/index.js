@@ -306,104 +306,23 @@ app.get('/debug-paths', (req, res) => {
   });
 });
 
-const localBuildPath = path.join(__dirname, '../client/build'); // For local dev
 
-// Debug endpoint
-app.get('/nuke', (req, res) => {
-  try {
-    const result = {
-        directories: {
-        root: safeReadDir('/'),
-        app: safeReadDir('/app'),
-        dist: safeReadDir('/app/dist')
-      },
-      env: {
-        NODE_ENV: process.env.NODE_ENV,
-        RAILWAY_ENVIRONMENT: process.env.RAILWAY_ENVIRONMENT
-      }
-    };  
-    res.json(result);
-  } catch (e) {
-    res.status(500).json({ error: e.toString() });
-  }
-});
-
-function safeReadDir(path) {
-  try {
-    return {
-      exists: fs.existsSync(path),
-      files: fs.existsSync(path) ? fs.readdirSync(path) : []
-    };
-  } catch (e) {
-    return `Error: ${e.message}`;
-  }
-}
-
-// Serve static files if they exist
-/*if (fs.existsSync(staticPath)) {
-  console.log('✅ Serving PRODUCTION build from:', staticPath);
-  app.use('/app', express.static(staticPath));
-  app.get('/app/', (req, res) => {
-    res.sendFile(path.join(staticPath, 'index.html'));
-  });
-} 
-else if (fs.existsSync(localBuildPath)) {
-  console.log('⚠️ Serving LOCAL build from:', localBuildPath);
-  app.use('/app', express.static(localBuildPath));
-  app.get('/app/', (req, res) => {
-    res.sendFile(path.join(localBuildPath, 'index.html'));
-  });
-} 
-else {
-  console.error('❌ No build folder found at:', { staticPath, localBuildPath });
-}
-
-// Root redirect
-app.get('/', (req, res) => res.redirect('/app'));*/
-
-// ==================== STATIC FILE HANDLING ====================
-const staticPath = process.env.NODE_ENV === 'production'
-  ? '/app/dist'
+// ============== STATIC FILE CONFIG ==============
+const staticPath = process.env.NODE_ENV === 'production' 
+  ? '/app/dist' 
   : path.join(__dirname, '../client/build');
 
-// Debugging output
-console.log('🔍 Static file paths:', {
-  production: '/app/dist',
-  development: path.join(__dirname, '../client/build'),
-  resolved: staticPath,
-  exists: fs.existsSync(staticPath)
+console.log('🔍 Static files path:', staticPath);
+
+// Serve React build files
+app.use('/app', express.static(staticPath));
+app.get('/app/', (req, res) => {
+  res.sendFile(path.join(staticPath, 'index.html'));
 });
 
-// Serve static files if they exist
-if (fs.existsSync(staticPath)) {
-  console.log(`✅ Serving ${process.env.NODE_ENV} build from:`, staticPath);
-  
-  // Serve static files under /app
-  app.use('/app', express.static(staticPath));
-  
-  // Handle all /app/* routes
-  app.get('/app/', (req, res) => {
-    const requestedPath = req.params[0] || 'index.html';
-    const fullPath = path.join(staticPath, requestedPath);
-    
-    if (fs.existsSync(fullPath)) {
-      res.sendFile(fullPath);
-    } else {
-      res.sendFile(path.join(staticPath, 'index.html'));
-    }
-  });
-
-  // Redirect root to /app
-  app.get('/', (req, res) => res.redirect('/app'));
-  
-} else {
-  console.error('❌ Build folder missing at:', staticPath);
-  app.get('/', (req, res) => {
-    res.status(500).send('Build files missing - check deployment logs');
-  });
-}
-// ==================== END STATIC FILES ====================
-
+// Redirect root to /app
+app.get('/', (req, res) => res.redirect('/app'));
+// ============= END STATIC CONFIG ==============
 
 const { execSync } = require('child_process');
 
