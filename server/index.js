@@ -17,10 +17,7 @@ const fs = require('fs');
 /*const staticPath = '/app/dist';*/
 require('dotenv').config();
 
-const isProduction = process.env.NODE_ENV === 'production';
-const staticPath = isProduction 
-  ? '/app/dist' 
-  : path.join(__dirname, '../../client/build');
+/*const isProduction = process.env.NODE_ENV === 'production';*/
 
 console.log('POOL:', pool);
 console.log('⏱️ Startup Debug - Directory Contents:');
@@ -364,11 +361,48 @@ else {
 // Root redirect
 app.get('/', (req, res) => res.redirect('/app'));*/
 
-app.use('/app', express.static(staticPath));
-app.get('/app/', (req, res) => {
-  console.log('📦 Attempting to serve:', path.join(staticPath, req.path));
-  res.sendFile(path.join(staticPath, 'index.html'));
+// ==================== STATIC FILE HANDLING ====================
+const staticPath = process.env.NODE_ENV === 'production'
+  ? '/app/dist'
+  : path.join(__dirname, '../client/build');
+
+// Debugging output
+console.log('🔍 Static file paths:', {
+  production: '/app/dist',
+  development: path.join(__dirname, '../client/build'),
+  resolved: staticPath,
+  exists: fs.existsSync(staticPath)
 });
+
+// Serve static files if they exist
+if (fs.existsSync(staticPath)) {
+  console.log(`✅ Serving ${process.env.NODE_ENV} build from:`, staticPath);
+  
+  // Serve static files under /app
+  app.use('/app', express.static(staticPath));
+  
+  // Handle all /app/* routes
+  app.get('/app/', (req, res) => {
+    const requestedPath = req.params[0] || 'index.html';
+    const fullPath = path.join(staticPath, requestedPath);
+    
+    if (fs.existsSync(fullPath)) {
+      res.sendFile(fullPath);
+    } else {
+      res.sendFile(path.join(staticPath, 'index.html'));
+    }
+  });
+
+  // Redirect root to /app
+  app.get('/', (req, res) => res.redirect('/app'));
+  
+} else {
+  console.error('❌ Build folder missing at:', staticPath);
+  app.get('/', (req, res) => {
+    res.status(500).send('Build files missing - check deployment logs');
+  });
+}
+// ==================== END STATIC FILES ====================
 
 
 const { execSync } = require('child_process');
