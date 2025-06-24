@@ -22,7 +22,7 @@ export default function ProductDetails() {
         if (!token || !product) return false;
 
         try {
-            const res = await fetch(`http://localhost:4000/api/expenses/user`,{
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/expenses/user`, {
                 headers: { 'Authorization': `Bearer ${token}`}
             });
 
@@ -40,7 +40,7 @@ export default function ProductDetails() {
     useEffect(() => {
     const fetchReviews = async () => {
         try {
-            const res = await fetch(`http://localhost:4000/api/reviews/${product.id}`);
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/reviews/${product.id}`);
             const data = await res.json();
             setReviews(data);
         } catch (err) {
@@ -64,7 +64,7 @@ export default function ProductDetails() {
             navigate('/login');
             return;
         } try {
-            const res = await fetch('http://localhost:4000/api/expenses', {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/expenses`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ export default function ProductDetails() {
                             return;
                         }
                         try {
-                            const res = await fetch('http://localhost:4000/api/reviews', {
+                            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/reviews`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ export default function ProductDetails() {
                                 setComment('');
                                 setRating(5);
                                 //refresh reviews
-                                const refreshed = await fetch(`http://localhost:4000/api/reviews/${product.id}`);
+                                const refreshed = await fetch(`${process.env.REACT_APP_API_URL}/api/reviews/${product.id}`);
                                 const newReviews = await refreshed.json();
                                 setReviews(newReviews);
                             } else {

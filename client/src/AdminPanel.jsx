@@ -14,7 +14,7 @@ export default function AdminPanel(/*{ token }*/) {
     const fetchConfirmedExpenses = async () => {
       try {
         const token = localStorage.getItem('token'); 
-        const res = await fetch('http://localhost:4000/api/admin/confirmed-expenses', {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/confirmed-expenses`,  {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -34,7 +34,7 @@ export default function AdminPanel(/*{ token }*/) {
     const fetchReviews = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:4000/api/admin/reviews', {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/reviews`, {
           headers: { 
             'Content-Type': 'application/json',
            'Authorization': `Bearer ${token}` },
@@ -63,7 +63,7 @@ export default function AdminPanel(/*{ token }*/) {
   const handleReplySubmit = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:4000/api/admin/reply-to-expense/${id}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/reply-to-expense/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export default function AdminPanel(/*{ token }*/) {
   const handleReviewReplySubmit = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:4000/api/admin/reply-to-review/${id}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/reply-to-review/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

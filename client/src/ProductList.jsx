@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import products from './ProductListData';
+import { toast } from 'react-toastify';
 import './productStyle.css';
 
 export default function ProductList() {
@@ -14,13 +15,13 @@ export default function ProductList() {
         const token = localStorage.getItem('token');
 
         if (!token) {
-            alert('Please log in to buy products.');
+            toast.error('Please log in to buy products.');
             setIsSubmitting(false);
             return;
         }
 
         try {
-            const res = await fetch('http://localhost:4000/api/expenses',{
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/expenses`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,13 +38,13 @@ export default function ProductList() {
             const data = await res.json();
 
             if (res.ok) {
-                alert('Product added to your expense tracker!');
+                toast.success('Product added to your expense tracker!');
             } else {
-                alert(`Error: ${data.error || data.message}`);
+                toast.error(`Error: ${data.error || data.message}`);
             }
         } catch (err) {
             console.error('Buy failed:', err);
-            alert('Something went wrong!');
+            toast.error('Something went wrong!');
         } finally {
             setIsSubmitting(false);
         }

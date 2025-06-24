@@ -45,13 +45,13 @@ export default function ChatWindow() {
 
         try {
             setLoading(true);
-            const userRes = await fetch(`http://localhost:4000/api/chat/user/${otherUserId}`, {
+            const userRes = await fetch(`${process.env.REACT_APP_API_URL}/api/chat/user/${otherUserId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             
             if (userRes.ok) {setOtherUser(await userRes.json());}
             
-            const msgRes = await fetch(`http://localhost:4000/api/chat/${otherUserId}`, {
+            const msgRes = await fetch(`${process.env.REACT_APP_API_URL}/api/chat/${otherUserId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -61,7 +61,7 @@ export default function ChatWindow() {
                 setMessages(data.messages || []);
             }
 
-            await fetch(`http://localhost:4000/api/chat/${otherUserId}/read`, {
+            await fetch(`${process.env.REACT_APP_API_URL}/api/chat/${otherUserId}/read`, {
                 method: 'PATCH',
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -87,7 +87,7 @@ export default function ChatWindow() {
         
 
         try {
-            const res = await fetch('http://localhost:4000/api/chat', {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

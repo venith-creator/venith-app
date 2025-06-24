@@ -34,7 +34,7 @@ export default function ChatList() {
             try {
                 console.log('Fetching conversations with token:', token);
                 setLoading(true);
-                const response = await fetch('http://localhost:4000/api/chat/conversations', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/chat/conversations`, {
                     headers: { Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
@@ -62,7 +62,7 @@ export default function ChatList() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch('http://localhost:4000/api/chat/all-users', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/chat/all-users`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
