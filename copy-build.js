@@ -1,27 +1,31 @@
-// copy-build.js
-import { existsSync } from 'fs';
-import { cp, rm, mkdir } from 'fs/promises';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
-const __dirname = path.resolve(); // absolute base directory
+const buildSrc = path.join(__dirname, 'client', 'build');
+const buildDest = path.join(__dirname, 'server', 'dist');
 
-const src  = path.join(__dirname, 'client', 'build');
-const dest = path.join(__dirname, 'server', 'dist');
-
-async function main() {
-  if (!existsSync(src)) {
-    console.error('❌  React build folder missing:', src);
-    process.exit(1);
+function copyRecursive(src, dest) {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
   }
 
-  await rm(dest, { recursive: true, force: true });
-  await mkdir(dest, { recursive: true });
-  await cp(src, dest, { recursive: true });
+  const entries = fs.readdirSync(src, { withFileTypes: true });
 
-  console.log('✅  Copied React build →', dest);
+  for (let entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+
+    if (entry.isDirectory()) {
+      copyRecursive(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
 }
 
-main().catch(err => {
-  console.error('❌  Copy failed:', err);
-  process.exit(1);
-});
+if (fs.existsSync(buildSrc)) {
+  copyRecursive(buildSrc, buildDest);
+  console.log(`✅  Copied React build → ${buildDest}`);
+} else {
+  console.error(`❌  React build folder missing: ${buildSrc}`);
+}
