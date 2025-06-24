@@ -1,0 +1,3 @@
+[build]
+useNixpacks = false
+builder = "heroku/buildpacks:20"
