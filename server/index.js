@@ -308,9 +308,7 @@ app.get('/debug-paths', (req, res) => {
 
 
 // ============== STATIC FILE CONFIG ==============
-const staticPath = process.env.NODE_ENV === 'production' 
-  ? '/app/dist' 
-  : path.join(__dirname, '../client/build');
+const staticPath = path.join(__dirname, 'dist');
 
 console.log('🔍 Static files path:', staticPath);
 

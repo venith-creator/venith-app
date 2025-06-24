@@ -2,8 +2,9 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build": "cd client && npm install && npm run build",
-    "postinstall": "mkdir -p /app/dist && (cp -r client/build/* /app/dist/ || echo 'Copy failed, creating fallback')",
+    "build": "npm run build-client && node copy-build.js",
+    "build-client": "cd client && npm install && npm run build",
+    "postinstall": "node copy-build.js",
     "start": "node server/index.js"
   }
 }
