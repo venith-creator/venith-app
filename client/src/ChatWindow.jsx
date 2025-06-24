@@ -45,13 +45,13 @@ export default function ChatWindow() {
 
         try {
             setLoading(true);
-            const userRes = await fetch('/api/chat/user/${otherUserId}', {
+            const userRes = await fetch(`/api/chat/user/${otherUserId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             
             if (userRes.ok) {setOtherUser(await userRes.json());}
             
-            const msgRes = await fetch('/api/chat/${otherUserId}', {
+            const msgRes = await fetch(`/api/chat/${otherUserId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -61,7 +61,7 @@ export default function ChatWindow() {
                 setMessages(data.messages || []);
             }
 
-            await fetch('/api/chat/${otherUserId}/read', {
+            await fetch(`/api/chat/${otherUserId}/read`, {
                 method: 'PATCH',
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -146,7 +146,7 @@ export default function ChatWindow() {
                
                return (
                     <div key={msg.id} className=
-                    {`message-bubble ${msg.direction}`}>
+                    {`message-bubble ${direction}`}>
                         <div className="message-meta">
                             {direction === 'incoming' ? otherUser.name : 'You'}
                         </div>

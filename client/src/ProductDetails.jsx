@@ -40,7 +40,7 @@ export default function ProductDetails() {
     useEffect(() => {
     const fetchReviews = async () => {
         try {
-            const res = await fetch('/api/reviews/${product.id}');
+            const res = await fetch(`/api/reviews/${product.id}`);
             const data = await res.json();
             setReviews(data);
         } catch (err) {
@@ -165,7 +165,7 @@ export default function ProductDetails() {
                                 setComment('');
                                 setRating(5);
                                 //refresh reviews
-                                const refreshed = await fetch('/api/reviews/${product.id}');
+                                const refreshed = await fetch(`/api/reviews/${product.id}`);
                                 const newReviews = await refreshed.json();
                                 setReviews(newReviews);
                             } else {

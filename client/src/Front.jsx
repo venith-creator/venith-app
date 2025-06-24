@@ -45,7 +45,7 @@ export default function Front() {
 
         if (editingId) {
             /*try {*/
-                const res = await fetch('/api/users/${editingId}', {
+                const res = await fetch(`/api/users/${editingId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
@@ -115,7 +115,7 @@ export default function Front() {
         const token = localStorage.getItem('token')
         if (!window.confirm('Are you sure you want to delete this user?')) return;
         try {
-            const res = await fetch('/api/users/${id}', {
+            const res = await fetch(`/api/users/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization' : `Bearer ${token}`}
             });

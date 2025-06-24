@@ -64,7 +64,7 @@ export default function AdminPanel(/*{ token }*/) {
   const handleReplySubmit = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/admin/reply-to-expense/${id}', {
+      const res = await fetch(`/api/admin/reply-to-expense/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export default function AdminPanel(/*{ token }*/) {
   const handleReviewReplySubmit = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/admin/reply-to-review/${id}', {
+      const res = await fetch(`/api/admin/reply-to-review/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -105,7 +105,7 @@ export default function Projects  () {
         if (!token) return;
 
         try {
-            const res = await fetch('/api/expenses/${id}', {
+            const res = await fetch(`/api/expenses/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ export default function Projects  () {
         }
 
         try{
-            const res = await fetch('/api/expenses/${expenseId}/confirm',{
+            const res = await fetch(`/api/expenses/${expenseId}/confirm`,{
                 method: 'PATCH',
                 headers: {
                     Authorization : `Bearer ${token}`
@@ -163,7 +163,7 @@ export default function Projects  () {
         if (!window.confirm("Are you sure you want to delete this expense?")) return;
 
         try {
-            const res = await fetch('/api/expenses/${id}', {
+            const res = await fetch(`/api/expenses/${id}`, {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` }
             });
