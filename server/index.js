@@ -14,10 +14,25 @@ const { authenticateToken, verifyOwnerOrAdmin } = require('./middleware/auth');
 const chatRoutes = require('./chat');
 const path = require('path');
 const fs = require('fs');
-const staticPath = '/app/dist';
+/*const staticPath = '/app/dist';*/
 require('dotenv').config();
 
+const isProduction = process.env.NODE_ENV === 'production';
+const staticPath = isProduction 
+  ? '/app/dist' 
+  : path.join(__dirname, '../../client/build');
+
 console.log('POOL:', pool);
+console.log('⏱️ Startup Debug - Directory Contents:');
+try {
+  console.log('Root:', fs.readdirSync('/'));
+  console.log('/app:', fs.readdirSync('/app'));
+  console.log('/app/dist:', fs.existsSync('/app/dist') 
+    ? fs.readdirSync('/app/dist') 
+    : 'MISSING');
+} catch (e) {
+  console.error('Directory check failed:', e.message);
+}
 
 app.use(cors({
     origin: 'http://localhost:3000',
@@ -300,27 +315,35 @@ const localBuildPath = path.join(__dirname, '../client/build'); // For local dev
 app.get('/nuke', (req, res) => {
   try {
     const result = {
-      railwayPath: {
-        path: staticPath,
-        exists: fs.existsSync(staticPath),
-        files: fs.existsSync(staticPath) ? fs.readdirSync(staticPath) : []
+        directories: {
+        root: safeReadDir('/'),
+        app: safeReadDir('/app'),
+        dist: safeReadDir('/app/dist')
       },
-      localPath: {
-        path: localBuildPath,
-        exists: fs.existsSync(localBuildPath),
-        files: fs.existsSync(localBuildPath) ? fs.readdirSync(localBuildPath) : []
-      },
-      __dirname,
-      processCwd: process.cwd()
-    };
+      env: {
+        NODE_ENV: process.env.NODE_ENV,
+        RAILWAY_ENVIRONMENT: process.env.RAILWAY_ENVIRONMENT
+      }
+    };  
     res.json(result);
   } catch (e) {
     res.status(500).json({ error: e.toString() });
   }
 });
 
+function safeReadDir(path) {
+  try {
+    return {
+      exists: fs.existsSync(path),
+      files: fs.existsSync(path) ? fs.readdirSync(path) : []
+    };
+  } catch (e) {
+    return `Error: ${e.message}`;
+  }
+}
+
 // Serve static files if they exist
-if (fs.existsSync(staticPath)) {
+/*if (fs.existsSync(staticPath)) {
   console.log('✅ Serving PRODUCTION build from:', staticPath);
   app.use('/app', express.static(staticPath));
   app.get('/app/', (req, res) => {
@@ -339,17 +362,25 @@ else {
 }
 
 // Root redirect
-app.get('/', (req, res) => res.redirect('/app'));
+app.get('/', (req, res) => res.redirect('/app'));*/
+
+app.use('/app', express.static(staticPath));
+app.get('/app/', (req, res) => {
+  console.log('📦 Attempting to serve:', path.join(staticPath, req.path));
+  res.sendFile(path.join(staticPath, 'index.html'));
+});
+
 
 const { execSync } = require('child_process');
 
 app.get('/nuke', (req, res) => {
   try {
-    res.json({
-      distExists: fs.existsSync(staticPath),
-      files: fs.existsSync(staticPath) ? fs.readdirSync(staticPath) : [],
-      fullPath: path.resolve(staticPath)
-    });
+    const logs = {
+      findApp: execSync('find /app').toString(),
+      distContents: execSync('ls -la /app/dist || echo "DIST MISSING"').toString(),
+      env: process.env
+    };
+    res.json(logs);
   } catch (e) {
     res.status(500).send(e.toString());
   }

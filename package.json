@@ -2,8 +2,8 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build": "cd client && npm install && npm run build",
-    "start": "node server/index.js",
-    "postinstall": "mkdir -p /app/dist && cp -r client/build/* /app/dist/"
+    "build": "cd client && npm install && npm run build && ls -R client/build > build.log",
+    "start": "echo 'STARTING SERVER...' &&  (ls -la /app/dist || echo 'NO DIST FOLDER') &&  node server/index.js",
+    "postinstall": "mkdir -p /app/dist && (cp -rv client/build/* /app/dist/ || echo 'COPY FAILED') && ls -R /app/dist > dist.log && echo 'FORCE CREATING index.html' &&  echo '<h1>MANUAL INDEX</h1>' > /app/dist/index.html"
   }
 }
